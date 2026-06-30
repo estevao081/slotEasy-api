@@ -12,6 +12,6 @@ FROM eclipse-temurin:21-jre
 
 EXPOSE 8080
 
-COPY --from=builder /target/slotEasy-api-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=builder /target/slotes-api-1.0.0.jar app.jar
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
