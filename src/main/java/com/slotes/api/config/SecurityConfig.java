@@ -119,7 +119,7 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(
+        configuration.setAllowedOriginPatterns(
                 List.of("https://sloteasy.netlify.app")
         );
 
@@ -127,9 +127,13 @@ public class SecurityConfig {
                 List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
         );
 
-        configuration.setAllowedHeaders(
-                List.of("*")
-        );
+        configuration.setAllowedHeaders(List.of(
+                "Authorization",
+                "Content-Type",
+                "Accept",
+                "Origin",
+                "X-Requested-With"
+        ));
 
         configuration.setAllowCredentials(true);
 
