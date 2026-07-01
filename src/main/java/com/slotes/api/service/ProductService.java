@@ -24,6 +24,7 @@ public class ProductService {
             throw new DuplicateResourceException("Código já cadastrado: " + request.code());
         }
         Product product = productMapper.toEntity(request);
+        product.setName(product.getName().toUpperCase());
         return productMapper.toResponse(productRepository.save(product));
     }
 
