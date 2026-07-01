@@ -8,6 +8,9 @@ import com.slotes.api.mapper.ProductMapper;
 import com.slotes.api.model.Product;
 import com.slotes.api.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,10 +31,9 @@ public class ProductService {
         return productMapper.toResponse(productRepository.save(product));
     }
 
-    public List<ProductResponse> findAll() {
-        return productRepository.findAll().stream()
-                .map(productMapper::toResponse)
-                .toList();
+    public Page<ProductResponse> listProducts(int page, int items) {
+        Pageable pageable = PageRequest.of(page, items);
+        return productRepository.findAll(pageable).map(productMapper::toResponse);
     }
 
     public ProductResponse findById(Long id) {

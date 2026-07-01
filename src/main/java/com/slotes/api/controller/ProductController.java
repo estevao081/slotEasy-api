@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -43,8 +44,10 @@ public class ProductController {
 
     @GetMapping
     @Operation(summary = "Listar todos os produtos")
-    public ResponseEntity<List<ProductResponse>> findAll() {
-        return ResponseEntity.ok(productService.findAll());
+    public ResponseEntity<Page<ProductResponse>> findAll(@RequestParam int page,
+                                                         @RequestParam int item) {
+        Page<ProductResponse> products = productService.listProducts(page, item);
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("/{id}")
@@ -154,13 +157,13 @@ public class ProductController {
 
         return ResponseEntity.ok(
                 """
-                Importação concluída!
-    
-                Produtos importados: %d
-                Duplicados na planilha: %d
-                Já existentes no banco: %d
-                Linhas vazias: %d
-                """
+                        Importação concluída!
+                        
+                        Produtos importados: %d
+                        Duplicados na planilha: %d
+                        Já existentes no banco: %d
+                        Linhas vazias: %d
+                        """
                         .formatted(
                                 importados,
                                 duplicadosPlanilha,
