@@ -72,7 +72,7 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/products/import")
+    @PostMapping("/import")
     public ResponseEntity<String> importar(@RequestParam("file") MultipartFile file) throws IOException {
 
         DataFormatter formatter = new DataFormatter();
