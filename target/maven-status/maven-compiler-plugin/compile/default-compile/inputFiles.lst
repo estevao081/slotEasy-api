@@ -1,6 +1,7 @@
 C:\Users\thiag\Documents\Programação\slotEasy-api\src\main\java\com\slotes\api\config\OpenApiConfig.java
 C:\Users\thiag\Documents\Programação\slotEasy-api\src\main\java\com\slotes\api\config\SecurityConfig.java
 C:\Users\thiag\Documents\Programação\slotEasy-api\src\main\java\com\slotes\api\controller\AuthController.java
+C:\Users\thiag\Documents\Programação\slotEasy-api\src\main\java\com\slotes\api\controller\HealthController.java
 C:\Users\thiag\Documents\Programação\slotEasy-api\src\main\java\com\slotes\api\controller\ProductController.java
 C:\Users\thiag\Documents\Programação\slotEasy-api\src\main\java\com\slotes\api\dto\AuthDTOs.java
 C:\Users\thiag\Documents\Programação\slotEasy-api\src\main\java\com\slotes\api\dto\ErrorResponse.java

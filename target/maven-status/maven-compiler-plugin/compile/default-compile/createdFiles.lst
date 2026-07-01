@@ -14,6 +14,7 @@ com\slotes\api\model\Product$ProductBuilder.class
 com\slotes\api\config\SecurityConfig.class
 com\slotes\api\model\Product.class
 com\slotes\api\dto\AuthDTOs$LoginRequest.class
+com\slotes\api\controller\HealthController.class
 com\slotes\api\controller\AuthController.class
 com\slotes\api\mapper\ProductMapper.class
 com\slotes\api\model\User.class
