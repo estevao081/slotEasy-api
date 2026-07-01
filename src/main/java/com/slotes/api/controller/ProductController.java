@@ -19,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/products")
@@ -70,23 +72,31 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/import")
+    @PostMapping("/products/import")
     public ResponseEntity<String> importar(@RequestParam("file") MultipartFile file) throws IOException {
 
         DataFormatter formatter = new DataFormatter();
+
         List<Product> produtos = new ArrayList<>();
-        int totalImportados = 0;
+        Set<String> codigosPlanilha = new HashSet<>();
+        Set<String> codigosBanco = new HashSet<>(productRepository.findAllCodes());
+
+        int importados = 0;
+        int duplicadosPlanilha = 0;
+        int duplicadosBanco = 0;
+        int linhasVazias = 0;
 
         try (Workbook workbook = WorkbookFactory.create(file.getInputStream())) {
 
             Sheet sheet = workbook.getSheetAt(0);
 
-            // Começa da linha 1 (segunda linha da planilha)
+            // Começa na segunda linha (índice 1)
             for (int i = 1; i <= sheet.getLastRowNum(); i++) {
 
                 Row row = sheet.getRow(i);
 
                 if (row == null) {
+                    linhasVazias++;
                     continue;
                 }
 
@@ -95,6 +105,21 @@ public class ProductController {
 
                 // Ignora linhas vazias
                 if (codigo.isBlank() && nome.isBlank()) {
+                    linhasVazias++;
+                    continue;
+                }
+
+                // Código duplicado na planilha
+                if (!codigosPlanilha.add(codigo)) {
+                    duplicadosPlanilha++;
+                    System.out.println("Código duplicado na planilha: " + codigo);
+                    continue;
+                }
+
+                // Código já existente no banco
+                if (codigosBanco.contains(codigo)) {
+                    duplicadosBanco++;
+                    System.out.println("Código já existe no banco: " + codigo);
                     continue;
                 }
 
@@ -104,25 +129,44 @@ public class ProductController {
 
                 produtos.add(produto);
 
+                // Evita que um mesmo código apareça novamente durante esta importação
+                codigosBanco.add(codigo);
+
                 // Salva em lotes de 500
                 if (produtos.size() == 500) {
-                    productRepository.saveAll(produtos);
-                    totalImportados += produtos.size();
-                    produtos.clear();
 
-                    System.out.println(totalImportados + " produtos importados...");
+                    productRepository.saveAll(produtos);
+
+                    importados += produtos.size();
+
+                    System.out.println(importados + " produtos importados...");
+
+                    produtos.clear();
                 }
             }
 
             // Salva o restante
             if (!produtos.isEmpty()) {
                 productRepository.saveAll(produtos);
-                totalImportados += produtos.size();
+                importados += produtos.size();
             }
         }
 
         return ResponseEntity.ok(
-                "Importação concluída. Total de produtos importados: " + totalImportados
+                """
+                Importação concluída!
+    
+                Produtos importados: %d
+                Duplicados na planilha: %d
+                Já existentes no banco: %d
+                Linhas vazias: %d
+                """
+                        .formatted(
+                                importados,
+                                duplicadosPlanilha,
+                                duplicadosBanco,
+                                linhasVazias
+                        )
         );
     }
 }
